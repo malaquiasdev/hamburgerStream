@@ -1,4 +1,7 @@
 /Users/mateusmalaquias/Developer/me/hamburgerStream/src/main/java/dev/malaquias/GreetingResource.java
+/Users/mateusmalaquias/Developer/me/hamburgerStream/src/main/java/dev/malaquias/order/OrderRepository.java
+/Users/mateusmalaquias/Developer/me/hamburgerStream/src/main/java/dev/malaquias/order/OrderService.java
 /Users/mateusmalaquias/Developer/me/hamburgerStream/src/main/java/dev/malaquias/order/entity/OrderEntity.java
 /Users/mateusmalaquias/Developer/me/hamburgerStream/src/main/java/dev/malaquias/order/entity/OrderItemEntity.java
+/Users/mateusmalaquias/Developer/me/hamburgerStream/src/main/java/dev/malaquias/order/infra/dto/OrderCreatedConsumeDTO.java
 /Users/mateusmalaquias/Developer/me/hamburgerStream/src/main/java/dev/malaquias/order/infra/queue/OrderConsumer.java

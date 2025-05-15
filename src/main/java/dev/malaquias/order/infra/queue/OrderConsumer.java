@@ -1,6 +1,7 @@
 package dev.malaquias.order.infra.queue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.malaquias.order.OrderService;
 import dev.malaquias.order.infra.dto.OrderCreatedConsumeDTO;
 import io.smallrye.reactive.messaging.annotations.Blocking;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,11 +15,14 @@ public class OrderConsumer {
 
     @Inject
     ObjectMapper mapper;
+    @Inject
+    OrderService service;
 
     @Incoming("order-created")
     @Blocking
     public void consume(byte[] message) throws IOException {
         OrderCreatedConsumeDTO dto = mapper.readValue(message, OrderCreatedConsumeDTO.class);
         System.out.println("📥 Received order: " + dto);
+        service.save(dto);
     }
 }
