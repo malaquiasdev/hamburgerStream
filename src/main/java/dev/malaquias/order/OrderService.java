@@ -40,14 +40,16 @@ public class OrderService {
                 .map(itemDto -> itemFromDTO(itemDto, order))
                 .toList();
 
-        var total = items.stream()
+        order.setItems(items);
+        order.setTotalPrice(calculateTotalOrderPrice(items));
+        return order;
+    }
+
+    private static BigDecimal calculateTotalOrderPrice(List<Item> items) {
+        return items.stream()
                 .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
-
-        order.setItems(items);
-        order.setTotalPrice(total);
-        return order;
     }
 
     private Item itemFromDTO(OrderCreatedConsumeDTO.ItemDTO itemDto, Order order) {
