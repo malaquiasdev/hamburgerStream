@@ -1,5 +1,6 @@
 package dev.malaquias.order;
 
+import dev.malaquias.order.entity.Item;
 import dev.malaquias.order.entity.Order;
 import dev.malaquias.order.infra.dto.OrderCreatedConsumeDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,6 +8,9 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @ApplicationScoped
 public class OrderService {
@@ -23,7 +27,36 @@ public class OrderService {
             log.warn("skipping duplicated order — orderCode: {}", dto.orderCode());
             return;
         }
-        orderRepository.persist(Order.fromDTO(dto));
+        orderRepository.persist(orderFromDTO(dto));
+    }
+
+    private Order orderFromDTO(OrderCreatedConsumeDTO dto) {
+        Order order = new Order();
+        order.setOrderCode(dto.orderCode());
+        order.setCustomerId(dto.customerId());
+
+        List<Item> items = dto.items()
+                .stream()
+                .map(itemDto -> itemFromDTO(itemDto, order))
+                .toList();
+
+        var total = items.stream()
+                .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        order.setItems(items);
+        order.setTotalPrice(total);
+        return order;
+    }
+
+    private Item itemFromDTO(OrderCreatedConsumeDTO.ItemDTO itemDto, Order order) {
+        Item item = new Item();
+        item.setProduct(itemDto.product());
+        item.setQuantity(itemDto.quantity());
+        item.setPrice(itemDto.price());
+        item.setOrder(order);
+        return item;
     }
 
 }

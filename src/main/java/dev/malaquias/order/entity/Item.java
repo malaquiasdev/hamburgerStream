@@ -1,5 +1,6 @@
 package dev.malaquias.order.entity;
 
+import dev.malaquias.order.infra.dto.OrderCreatedConsumeDTO;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

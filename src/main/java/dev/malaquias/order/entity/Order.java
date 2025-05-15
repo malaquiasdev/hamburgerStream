@@ -3,6 +3,7 @@ package dev.malaquias.order.entity;
 import dev.malaquias.order.infra.dto.OrderCreatedConsumeDTO;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,26 +21,14 @@ public class Order {
     @Column(unique = true)
     private Integer orderCode;
     private Integer customerId;
+    private BigDecimal totalPrice;
+
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items;
 
-    public static Order fromDTO(OrderCreatedConsumeDTO dto) {
-        Order order = new Order();
-        order.setOrderCode(dto.orderCode());
-        order.setCustomerId(dto.customerId());
-
-        List<Item> items = dto.items().stream().map(itemDto -> {
-            Item item = new Item();
-            item.setProduct(itemDto.product());
-            item.setQuantity(itemDto.quantity());
-            item.setPrice(itemDto.price());
-            item.setOrder(order);
-            return item;
-        }).toList();
-
-        order.setItems(items);
-        return order;
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public UUID getId() {
@@ -64,6 +53,10 @@ public class Order {
 
     public List<Item> getItems() {
         return items;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 
     public void setItems(List<Item> items) {
