@@ -12,7 +12,7 @@ import java.util.UUID;
                 @Index(name = "idx_order_code", columnList = "orderCode"),
                 @Index(name = "idx_customer_id", columnList = "customerId")
         })
-public class OrderEntity {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,15 +22,15 @@ public class OrderEntity {
     private Integer customerId;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItemEntity> items;
+    private List<Item> items;
 
-    public static OrderEntity fromDTO(OrderCreatedConsumeDTO dto) {
-        OrderEntity order = new OrderEntity();
+    public static Order fromDTO(OrderCreatedConsumeDTO dto) {
+        Order order = new Order();
         order.setOrderCode(dto.orderCode());
         order.setCustomerId(dto.customerId());
 
-        List<OrderItemEntity> items = dto.items().stream().map(itemDto -> {
-            OrderItemEntity item = new OrderItemEntity();
+        List<Item> items = dto.items().stream().map(itemDto -> {
+            Item item = new Item();
             item.setProduct(itemDto.product());
             item.setQuantity(itemDto.quantity());
             item.setPrice(itemDto.price());
@@ -62,11 +62,11 @@ public class OrderEntity {
         this.customerId = customerId;
     }
 
-    public List<OrderItemEntity> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public void setItems(List<OrderItemEntity> items) {
+    public void setItems(List<Item> items) {
         this.items = items;
         if (items != null) {
             items.forEach(i -> i.setOrder(this));

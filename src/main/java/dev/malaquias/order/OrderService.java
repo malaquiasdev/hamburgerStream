@@ -1,6 +1,6 @@
 package dev.malaquias.order;
 
-import dev.malaquias.order.entity.OrderEntity;
+import dev.malaquias.order.entity.Order;
 import dev.malaquias.order.infra.dto.OrderCreatedConsumeDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,7 +23,7 @@ public class OrderService {
             log.warn("skipping duplicated order — orderCode: {}", dto.orderCode());
             return;
         }
-        orderRepository.persist(OrderEntity.fromDTO(dto));
+        orderRepository.persist(Order.fromDTO(dto));
     }
 
 }

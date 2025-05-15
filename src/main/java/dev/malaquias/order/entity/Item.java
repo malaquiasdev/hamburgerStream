@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "order_items")
-public class OrderItemEntity {
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -19,7 +19,7 @@ public class OrderItemEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
-    private OrderEntity order;
+    private Order order;
 
     public UUID getId() {
         return id;
@@ -49,11 +49,11 @@ public class OrderItemEntity {
         this.price = price;
     }
 
-    public OrderEntity getOrder() {
+    public Order getOrder() {
         return order;
     }
 
-    public void setOrder(OrderEntity order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 }
