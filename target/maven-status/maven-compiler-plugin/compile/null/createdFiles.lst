@@ -1,2 +1,4 @@
 dev/malaquias/order/infra/queue/OrderConsumer.class
 dev/malaquias/GreetingResource.class
+dev/malaquias/order/entity/Order.class
+dev/malaquias/order/entity/Item.class

@@ -22,7 +22,6 @@ public class OrderConsumer {
     @Blocking
     public void consume(byte[] message) throws IOException {
         OrderCreatedConsumeDTO dto = mapper.readValue(message, OrderCreatedConsumeDTO.class);
-        System.out.println("📥 Received order: " + dto);
         service.save(dto);
     }
 }
