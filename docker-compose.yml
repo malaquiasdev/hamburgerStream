@@ -1,19 +1,23 @@
+version: "3.8"
+
 services:
   rabbitmq:
     image: rabbitmq:3.13-management
     ports:
       - 15672:15672
       - 5672:5672
-  postgres:
-    image: postgres:15
+
+  mysql:
+    image: mysql:8.0
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: hamburger_db
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: hamburger_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
     ports:
-      - 5432:5432
+      - 3306:3306
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
 
 volumes:
-  postgres_data:
+  mysql_data:

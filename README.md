@@ -44,6 +44,12 @@ The system simulates a real-world flow where customer orders are received throug
 }
 ```
 
+## Access RabbitMQ Management
+http://localhost:15672
+
+user: guest
+password: guest
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
