@@ -3,6 +3,7 @@ package dev.malaquias.order;
 import dev.malaquias.order.entity.Item;
 import dev.malaquias.order.entity.Order;
 import dev.malaquias.order.infra.dto.OrderCreatedConsumeDTO;
+import dev.malaquias.order.infra.dto.OrderResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class OrderService {
@@ -22,12 +24,19 @@ public class OrderService {
 
     @Transactional
     public void save(OrderCreatedConsumeDTO dto) {
-        var previousOrder = orderRepository.find("orderCode", dto.orderCode()).firstResultOptional();
+        var previousOrder = findByCode(dto.orderCode());
         if(previousOrder.isPresent()) {
             log.warn("skipping duplicated order — orderCode: {}", dto.orderCode());
             return;
         }
         orderRepository.persist(orderFromDTO(dto));
+    }
+
+    public Optional<OrderResponse> findByCode(Integer orderCode) {
+        return orderRepository
+                .find("orderCode", orderCode)
+                .firstResultOptional()
+                .map(this::toDTO);
     }
 
     private Order orderFromDTO(OrderCreatedConsumeDTO dto) {
@@ -59,6 +68,23 @@ public class OrderService {
         item.setPrice(itemDto.price());
         item.setOrder(order);
         return item;
+    }
+
+    private OrderResponse toDTO(Order order) {
+        List<OrderResponse.ItemResponse> itemDTOs = order.getItems().stream()
+                .map(item -> new OrderResponse.ItemResponse(
+                        item.getProduct(),
+                        item.getQuantity(),
+                        item.getPrice()
+                ))
+                .toList();
+
+        return new OrderResponse(
+                order.getOrderCode(),
+                order.getCustomerId(),
+                order.getTotalPrice(),
+                itemDTOs
+        );
     }
 
 }
