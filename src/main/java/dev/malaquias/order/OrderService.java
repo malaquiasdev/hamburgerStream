@@ -4,6 +4,9 @@ import dev.malaquias.order.entity.Item;
 import dev.malaquias.order.entity.Order;
 import dev.malaquias.order.infra.dto.OrderCreatedConsumeDTO;
 import dev.malaquias.order.infra.dto.OrderResponse;
+import dev.malaquias.order.infra.dto.PagedResponse;
+import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -25,7 +28,7 @@ public class OrderService {
     @Transactional
     public void save(OrderCreatedConsumeDTO dto) {
         var previousOrder = findByCode(dto.orderCode());
-        if(previousOrder.isPresent()) {
+        if (previousOrder.isPresent()) {
             log.warn("skipping duplicated order — orderCode: {}", dto.orderCode());
             return;
         }
@@ -37,6 +40,33 @@ public class OrderService {
                 .find("orderCode", orderCode)
                 .firstResultOptional()
                 .map(this::toDTO);
+    }
+
+    public PagedResponse<OrderResponse> findAll(Integer customerId, int page, int size) {
+        var query = orderRepository.find("customerId = :customerId",
+                Parameters.with("customerId", customerId));
+        long total = query.count();
+
+        List<OrderResponse> data = query
+                .page(Page.of(page, size))
+                .list()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+
+        int totalPages = (int) Math.ceil((double) total / size);
+        Integer nextPage = (page + 1 < totalPages) ? page + 1 : null;
+        Integer previousPage = (page > 0) ? page - 1 : null;
+
+        return new PagedResponse<>(
+                data,
+                page,
+                size,
+                total,
+                totalPages,
+                nextPage,
+                previousPage
+        );
     }
 
     private Order orderFromDTO(OrderCreatedConsumeDTO dto) {
